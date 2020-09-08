@@ -3,19 +3,19 @@ import './index.css';
 import { useState } from 'react';
 // import { fetchJoinRoom } from './api';
 
-export const JoinRoom = (props) => {
-    const [roomId, setRoomId] = useState('');
+export const CreateRoom = (props) => {
+    const [youtubeUrl, setYoutubeUrl] = useState('');
 
     return (
-        <div className="JoinRoom">
+        <div className="CreateRoom">
             <input
-            type="text"
-            value={roomId}
-            onChange={e => setRoomId(e.target.value)}
-            placeholder="Room ID"/>
+                type="text"
+                value={youtubeUrl}
+                onChange={e => setYoutubeUrl(e.target.value)}
+                placeholder="Youtube url" />
             <button onClick={e => {
-                if (roomId && props.username) {
-                    console.log(roomId);
+                if (youtubeUrl && props.username) {
+                    console.log(youtubeUrl);
                     console.log(props.username);
                     // fetchJoinRoom(props.username, roomId)
                     //     .then((result) => {
@@ -24,7 +24,7 @@ export const JoinRoom = (props) => {
                     //         // TODO: display error
                     //     });
                 }
-            }}>Join Room</button>
+            }}>Create Room</button>
         </div>
     );
 };
