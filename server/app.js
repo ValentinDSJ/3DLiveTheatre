@@ -1,6 +1,8 @@
 const app = require('express')();
-const http = require('http').createServer(app);
+const server = require('http').createServer(app);
 const bodyParser = require("body-parser");
+const options = { /* ... */ };
+const io = require('socket.io')(server, options);
 
 const PORT = Number(process.env.PORT) | 8080;
 
@@ -37,6 +39,11 @@ app.get('/api/room/:id', (req, res) => {
     res.json({ room: room });
 });
 
-http.listen(PORT, () => {
+// io.on('connection', socker => {
+
+// });
+
+
+server.listen(PORT, () => {
     console.log(`listening on *:${PORT}`);
 });
