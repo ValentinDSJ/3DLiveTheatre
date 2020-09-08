@@ -1,0 +1,19 @@
+{
+  "name": "3dlivetheatre",
+  "version": "1.0.0",
+  "description": "Website build with three.js to watch youtube live or video with frends",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ValentinDSJ/3DLiveTheatre.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ValentinDSJ/3DLiveTheatre/issues"
+  },
+  "homepage": "https://github.com/ValentinDSJ/3DLiveTheatre#readme"
+}
