@@ -11,10 +11,7 @@ export const fetchCreateRoom = async (youtubeUrl) => {
         redirect: 'follow'
     };
 
-    const res = await fetch("http://localhost:8080/api/room/new", requestOptions);
-    // if (!res.success) { }
-    // console.log(res);
-    return res;
+    return await fetch("http://localhost:8080/api/room/new", requestOptions);
 };
 
 
@@ -28,8 +25,5 @@ export const fetchRoomById = async (id) => {
         redirect: 'follow'
     };
 
-    const res = await fetch("http://localhost:8080/api/room/" + id, requestOptions);
-    // if (!res.success) { }
-    // console.log(res);
-    return res;
+    return await fetch("http://localhost:8080/api/room/" + id, requestOptions);
 };

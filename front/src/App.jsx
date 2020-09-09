@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
-// import { JoinRoom } from './JoinRoom';
+import { JoinRoom } from './JoinRoom';
 import { CreateRoom } from './CreateRoom';
 import { Home } from './Home';
 import { fetchRoomById } from './api';
@@ -15,7 +15,7 @@ const App = () => {
                 .then(res => res.json())
                 .then(res => {
                     if (!res.success) {
-                        window.location = '/';
+                        // window.location = '/';
                     } else {
                         setRoom(res.data);
                     }
@@ -23,12 +23,7 @@ const App = () => {
         }
     }, []);
 
-    const setRoomFn = (room) => {
-        setRoom(room);
-        window.location = room.id;
-    };
-
-    if (room) {
+    if (room && username) {
         return (
             <div>
                 <Home room={room} username={username} />
@@ -42,8 +37,8 @@ const App = () => {
                     value={username}
                     onChange={e => setUsername(e.target.value)}
                     placeholder="Enter Your Username" />
-                {/* <JoinRoom username={username} setRoomFn={setRoomFn} /> */}
-                <CreateRoom username={username} setRoomFn={setRoomFn} />
+                <JoinRoom username={username} setRoom={setRoom} />
+                <CreateRoom username={username} setRoom={setRoom} />
             </div>
         );
     }

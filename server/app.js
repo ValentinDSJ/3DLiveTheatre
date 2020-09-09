@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
-let ROOMS = [];
+let ROOMS = {};
 let USERS = [];
 
 app.get('/', (req, res) => {
@@ -27,7 +27,7 @@ app.post('/api/room/new', (req, res) => {
         users: []
     };
     // TODO : test youtube video existe
-    ROOMS.push(newRoom);
+    ROOMS[newRoom.id] = newRoom;
     res.json({
         success: true,
         data: newRoom
@@ -35,7 +35,7 @@ app.post('/api/room/new', (req, res) => {
 });
 
 app.get('/api/room/:id', (req, res) => {
-    const room = ROOMS.find(r => r.id === req.params.id);
+    const room = ROOMS[req.params.id];
     if (!room) {
         res.json({
             success: false,
@@ -49,9 +49,17 @@ app.get('/api/room/:id', (req, res) => {
     });
 });
 
-// io.on('connection', socker => {
+io.on('connection', socket => {
 
-// });
+    socket.on("newUser", data => {
+        const { username, roomId } = JSON.parse(data);
+
+        ROOMS[roomId].users.push(username);
+        socket.join(roomId);
+        io.to(roomId).emit("allUser", JSON.stringify(ROOMS[roomId].users));
+    });
+
+});
 
 
 server.listen(PORT, () => {

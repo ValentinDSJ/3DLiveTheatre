@@ -19,7 +19,7 @@ export const CreateRoom = (props) => {
                         .then(res => res.json())
                         .then(res => {
                             if (res.success)
-                                props.setRoomFn(res.data);
+                                props.setRoom(res.data);
                         })
                 }
             }}>Create Room</button>
