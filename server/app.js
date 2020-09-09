@@ -19,24 +19,31 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/room/new', (req, res) => {
-    console.log(generateRoomId());
-    console.log(req.body);
     const newRoom = {
         id: generateRoomId(),
         youtubeUrl: req.body.youtubeUrl,
         users: []
     };
     ROOMS.push(newRoom);
-    res.json(newRoom);
+    res.json({
+        success: true,
+        data: newRoom
+    });
 });
 
 app.get('/api/room/:id', (req, res) => {
     const room = ROOMS.find(r => r.id === req.params.id);
     if (!room) {
-        res.json(null);
+        res.json({
+            success: false,
+            data: null
+        });
         return;
     }
-    res.json({ room: room });
+    res.json({
+        success: true,
+        data: room
+    });
 });
 
 // io.on('connection', socker => {

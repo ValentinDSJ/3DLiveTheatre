@@ -5,6 +5,7 @@ import { CreateRoom } from './CreateRoom';
 
 const App = () => {
     const [username, setUsername] = useState('');
+
     return (
         <div className="App">
             <h1>3DLiveTheatre</h1>
