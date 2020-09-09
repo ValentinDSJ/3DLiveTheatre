@@ -14,7 +14,6 @@ app.use(bodyParser.json());
 app.use(cors());
 
 let ROOMS = {};
-let USERS = [];
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
@@ -54,9 +53,18 @@ io.on('connection', socket => {
     socket.on("newUser", data => {
         const { username, roomId } = JSON.parse(data);
 
-        ROOMS[roomId].users.push(username);
+        ROOMS[roomId].users.push({
+            username: username,
+            id: socket.id
+        });
         socket.join(roomId);
-        io.to(roomId).emit("allUser", JSON.stringify(ROOMS[roomId].users));
+        io.to(roomId).emit("allUser", JSON.stringify(ROOMS[roomId].users.map(u => u.username)));
+    });
+
+    socket.on("disconnect", function () {
+        console.log(socket.id);
+        // TODO : remove user 
+        // TODO : and resend all Users
     });
 
 });
