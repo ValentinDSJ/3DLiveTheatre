@@ -1,6 +1,7 @@
 const app = require('express')();
 const server = require('http').createServer(app);
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const options = { /* ... */ };
 const io = require('socket.io')(server, options);
 
@@ -10,6 +11,7 @@ const generateRoomId = () => Math.random().toString(36).substring(3);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
 let ROOMS = [];
 let USERS = [];
@@ -21,9 +23,10 @@ app.get('/', (req, res) => {
 app.post('/api/room/new', (req, res) => {
     const newRoom = {
         id: generateRoomId(),
-        youtubeUrl: req.body.youtubeUrl,
+        youtubeUrl: req.body.youtubeUrl.split('=')[1],
         users: []
     };
+    // TODO : test youtube video existe
     ROOMS.push(newRoom);
     res.json({
         success: true,

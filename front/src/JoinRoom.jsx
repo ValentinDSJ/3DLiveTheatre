@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 export const JoinRoom = (props) => {
     const [roomId, setRoomId] = useState('');
+    
 
     return (
         <div className="JoinRoom">

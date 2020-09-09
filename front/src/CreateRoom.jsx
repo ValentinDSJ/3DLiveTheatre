@@ -1,7 +1,7 @@
 import React from 'react';
 import './index.css';
 import { useState } from 'react';
-// import { fetchJoinRoom } from './api';
+import { fetchCreateRoom } from './api';
 
 export const CreateRoom = (props) => {
     const [youtubeUrl, setYoutubeUrl] = useState('');
@@ -15,14 +15,12 @@ export const CreateRoom = (props) => {
                 placeholder="Youtube url" />
             <button onClick={e => {
                 if (youtubeUrl && props.username) {
-                    console.log(youtubeUrl);
-                    console.log(props.username);
-                    // fetchJoinRoom(props.username, roomId)
-                    //     .then((result) => {
-                    //         // TODO: rediect main page
-                    //     }).catch((err) => {
-                    //         // TODO: display error
-                    //     });
+                    fetchCreateRoom(youtubeUrl)
+                        .then(res => res.json())
+                        .then(res => {
+                            if (res.success)
+                                props.setRoomFn(res.data);
+                        })
                 }
             }}>Create Room</button>
         </div>
