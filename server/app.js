@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 let ROOMS = {};
+let USERS = [];
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
@@ -55,16 +56,37 @@ io.on('connection', socket => {
 
         ROOMS[roomId].users.push({
             username: username,
-            id: socket.id
+            id: socket.id,
+            roomId: roomId
         });
+
+        USERS.push({
+            username: username,
+            id: socket.id,
+            roomId: roomId
+        });
+
         socket.join(roomId);
         io.to(roomId).emit("allUser", JSON.stringify(ROOMS[roomId].users.map(u => u.username)));
     });
 
-    socket.on("disconnect", function () {
-        console.log(socket.id);
-        // TODO : remove user 
-        // TODO : and resend all Users
+    socket.on("disconnect", () => {
+        const userToRemove = USERS.find(user => user.id === socket.id);
+
+        USERS = USERS.filter(user => {
+            if (user.id !== userToRemove.id) {
+                return user;
+            }
+        });
+
+        ROOMS[userToRemove.roomId].users = ROOMS[userToRemove.roomId].users
+            .filter(user => {
+                if (user.id !== userToRemove.id) {
+                    return user;
+                }
+            });
+
+        io.to(userToRemove.roomId).emit("allUser", JSON.stringify(ROOMS[userToRemove.roomId].users.map(u => u.username)));
     });
 
 });
@@ -73,3 +95,5 @@ io.on('connection', socket => {
 server.listen(PORT, () => {
     console.log(`listening on *:${PORT}`);
 });
+
+// https://www.youtube.com/watch?v=mP_fnttJ5g0
