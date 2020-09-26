@@ -4,10 +4,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const options = { /* ... */ };
 const io = require('socket.io')(server, options);
+const { checkIfYoutubeVideoExite, generateRoomId, checkIfAllUserIsReady } = require('./utils');
+const { Router } = require('express');
 
 const PORT = Number(process.env.PORT) | 8080;
-
-const generateRoomId = () => Math.random().toString(36).substring(3);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -16,17 +16,26 @@ app.use(cors());
 let ROOMS = {};
 let USERS = [];
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
+// app.get('/', (req, res) => {
+//     res.sendFile(__dirname + '/index.html');
+// });
 
-app.post('/api/room/new', (req, res) => {
+app.post('/api/room/new', async (req, res) => {
+    const videoId = req.body.youtubeUrl.split('=')[1];
     const newRoom = {
         id: generateRoomId(),
-        youtubeUrl: req.body.youtubeUrl.split('=')[1],
+        youtubeUrl: videoId,
         users: []
     };
-    // TODO : test youtube video existe
+
+    if (!await checkIfYoutubeVideoExite(videoId)) {
+        res.json({
+            success: false,
+            message: 'youtube video not exist',
+            data: null
+        });
+        return;
+    }
     ROOMS[newRoom.id] = newRoom;
     res.json({
         success: true,
@@ -57,8 +66,12 @@ io.on('connection', socket => {
         ROOMS[roomId].users.push({
             username: username,
             id: socket.id,
-            roomId: roomId
+            roomId: roomId,
+            ready: false
         });
+
+        // if (!ROOMS[roomId].roomOwner)
+        //     ROOMS[roomId].roomOwner = socket.id
 
         USERS.push({
             username: username,
@@ -70,8 +83,25 @@ io.on('connection', socket => {
         io.to(roomId).emit("allUser", JSON.stringify(ROOMS[roomId].users.map(u => u.username)));
     });
 
+    socket.on("ready", (data) => {
+        const userReady = USERS.find(user => user.id === socket.id);
+
+        ROOMS[userReady.roomId].users = ROOMS[userReady.roomId].users
+            .map(user => {
+                if (user.id === userReady.id)
+                    user.ready = !user.ready;
+                return user;
+            });
+
+        const readyToStartVideoOrStop = checkIfAllUserIsReady(ROOMS[userReady.roomId].users);
+        io.to(userReady.roomId).emit("startOrStopVider", JSON.stringify(readyToStartVideoOrStop));
+    });
+
     socket.on("disconnect", () => {
         const userToRemove = USERS.find(user => user.id === socket.id);
+
+        if (!userToRemove)
+            return;
 
         USERS = USERS.filter(user => {
             if (user.id !== userToRemove.id) {

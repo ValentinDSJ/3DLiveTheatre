@@ -1,25 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>3DLiveTheatre</title>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js"></script>
+    <script>
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+        var renderer = new THREE.WebGLRenderer();
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+        scene.background = new THREE.Color(0xffffff);
+
+
+        var floorGeometry = new THREE.PlaneBufferGeometry(2000, 2000, 100, 100);
+        floorGeometry.rotateX(- Math.PI / 2);
+        floorGeometry = floorGeometry.toNonIndexed();
+
+        // floorGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+        var floorMaterial = new THREE.MeshBasicMaterial({ vertexColors: true });
+        var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        scene.add(floor);
+
+        camera.position.z = 5;
+        camera.position.y = 1;
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.render(scene, camera);
+        document.body.appendChild(renderer.domElement);
+    </script>
 </body>
 
 </html>

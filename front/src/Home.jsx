@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './index.css';
 import io from "socket.io-client";
 
@@ -6,6 +6,8 @@ const socket = io('http://localhost:8080');
 
 export const Home = (props) => {
     const [users, setUsers] = useState([]);
+    const [ready, setReady] = useState(false);
+    const refVideo = useRef();
 
     useEffect(() => {
         socket.emit('newUser', JSON.stringify({
@@ -15,7 +17,17 @@ export const Home = (props) => {
         socket.on('allUser', data => {
             setUsers(JSON.parse(data));
         });
+        socket.on('startOrStopVider', data => {
+            if (JSON.parse(data)) {
+                refVideo.current.click();
+            }
+        });
     }, [props.username, props.room]);
+
+    const sendReady = () => {
+        setReady(!ready);
+        socket.emit('ready', '');
+    };
 
     return (
         <div>
@@ -26,7 +38,9 @@ export const Home = (props) => {
                 allowfullscreen
                 title="video"
                 className="video"
+                ref={refVideo}
             />
+            <button onClick={e => sendReady()}>{!ready ? "Ready" : "Not Ready"}</button>
             <ul>
                 {users.map((user, idx) => {
                     return (<li key={idx}>{user}</li>);
